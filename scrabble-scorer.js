@@ -41,7 +41,7 @@ function initialPrompt() {
    }
 
 
-let newPointStructure;
+let newPointStructure = transform(oldPointStructure);
 
 const scoresByLetter = {
    1: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
@@ -83,7 +83,17 @@ const vowelBonusScorer = function(word) {
      
      
 
-let scrabbleScorer;
+function scrabbleScorer(word) {
+   word = word.toLowerCase();
+   let totalPoints = 0;
+
+   for (let i = 0; i < word.length; i++) {
+      const letter = word[i];
+
+      totalPoints += newPointStructure[letter];
+   }
+   return totalPoints;
+}
 
 const scoringAlgorithms = [
    {
@@ -123,23 +133,19 @@ const scoringAlgorithms = [
    {
       name: 'Scrabble',
       description: 'The traditional scoring algorithm.',
-      scorerFunction: function oldScrabbleScorer(word) {
-         word = word.toUpperCase();
-         let letterPoints = "";
-       
+      scorerFunction: function scrabbleScorer(word) {
+         word = word.toLowerCase();
+         let totalPoints = 0;
+      
          for (let i = 0; i < word.length; i++) {
-       
-           for (const pointValue in oldPointStructure) {
-       
-             if (oldPointStructure[pointValue].includes(word[i])) {
-               letterPoints += `Points for '${word[i]}': ${pointValue}\n`
-             }
-       
-           }
+            const letter = word[i];
+      
+            totalPoints += newPointStructure[letter];
          }
-         return letterPoints;
-       }
-   } 
+         return totalPoints;
+      }
+   }
+    
       ];
 
    
@@ -158,7 +164,25 @@ function scorerPrompt() {
 }
 
 
-function transform() {};
+function transform(oldPointStructure) {
+   let updatedPointStructure = {};
+   for (const pointValue in oldPointStructure) {
+      let letters = oldPointStructure[pointValue];
+
+      for (let i = 0; i < letters.length; i++) {
+         const letter = letters[i];
+         
+         updatedPointStructure[letter.toLowerCase()] = Number(pointValue);
+      }
+   }
+   return updatedPointStructure;
+};
+//console.log("Letters with score '4':", oldPointStructure[4]);
+//console.log("3rd letter within the key '4' array:", oldPointStructure[4][2]);
+
+//let letters = oldPointStructure[8];
+//console.log("Letters with score '8':", letters);
+//console.log("2nd letter within the key '8' array:", letters[1]);
 
 function runProgram() {
    let wordToScore = initialPrompt();
