@@ -47,12 +47,12 @@ const scoresByLetter = {
    1: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 };
 const simpleScorer = function(word) {
-  word = word.toUtpperCase();
+  word = word.toUpperCase();
   let totalPoints = 0;
   
   for (let i = 0; i < word.length; i++) {
    if (scoresByLetter[1].includes(word[i])) {
-      totalPoints +=1;
+      totalPoints += 1;
    }
   }    
 
@@ -69,19 +69,14 @@ const vowelBonusScorer = function(word) {
    let totalPoints = 0;
 
    for (let i = 0; i < word.length; i++) {
-
-      for (const pointValue in scoresForConsAndVowels) {
-
-         if (scoresForConsAndVowels[pointValue].includes(word[i])) {
-            totalPoints += Number(pointValue);
-
-         }
+      if (['A', 'E', 'I', 'O', 'U'].includes(word[i])) {
+         totalPoints += 3;
+      } else {
+         totalPoints += 1;
       }
    }
    return totalPoints;
-}       
-     
-     
+};   
 
 function scrabbleScorer(word) {
    word = word.toLowerCase();
@@ -99,54 +94,19 @@ const scoringAlgorithms = [
    {
       name: 'Simple Score',
       description: 'Each letter is worth 1 point.',
-      scorerFunction: function simpleScorer(word) {
-         word = word.toUpperCase();
-         let totalPoints = 0;
-         
-         for (let i = 0; i < word.length; i++) {
-          if (scoresByLetter[1].includes(word[i])) {
-             totalPoints +=1;
-          }
-         }    
-         return totalPoints;
-      }
+      scorerFunction: simpleScorer
        },
    {
       name: 'Bonus Vowels',
       description: 'Vowels are 3 pts, consonants are 1 pt.',
-      scorerFunction: function vowelBonusScorer(word) {
-         word = word.toUpperCase();
-         let totalPoints = 0;
-      
-         for (let i = 0; i < word.length; i++) {
-      
-            for (const pointValue in scoresForConsAndVowels) {
-      
-               if (scoresForConsAndVowels[pointValue].includes(word[i])) {
-                  totalPoints += Number(pointValue);
-               }
-            }
-         }
-         return totalPoints;
-      }
-   },
+      scorerFunction: vowelBonusScorer  
+       },
    {
       name: 'Scrabble',
       description: 'The traditional scoring algorithm.',
-      scorerFunction: function scrabbleScorer(word) {
-         word = word.toLowerCase();
-         let totalPoints = 0;
-      
-         for (let i = 0; i < word.length; i++) {
-            const letter = word[i];
-      
-            totalPoints += newPointStructure[letter];
-         }
-         return totalPoints;
+      scorerFunction: scrabbleScorer
       }
-   }
-    
-      ];
+    ];
 
    
   
